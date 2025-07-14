@@ -87,7 +87,7 @@ int binary_node_get_balance_factor(BinaryNode* node) {
 
 int binary_node_add(BinaryTree* tree, BinaryNode* node, void* e) {
     int c = tree->comperator(tree->root->value, e);
-    if (c == 0) return TREE_UNCHANGED;
+    if (c == 0) return EXIT_UNCHANGED;
 
     // Pointer to the node we want to check.
     BinaryNode** relevant_child = (c  > 0) ? &(node->right) : &(node->left);
@@ -95,7 +95,7 @@ int binary_node_add(BinaryTree* tree, BinaryNode* node, void* e) {
     int status;
     if ((*relevant_child) == NULL) {
         *relevant_child = binary_node_create(e, tree->element_size);
-        status = *relevant_child == NULL ? TREE_FAILED : TREE_CHANGED;
+        status = *relevant_child == NULL ? EXIT_FAILURE : EXIT_SUCCESS;
     } else {
         status = binary_node_add(tree, *relevant_child, e);
     }
@@ -147,7 +147,7 @@ void binary_tree_destroy(BinaryTree* tree) {
 int binary_tree_add(BinaryTree* tree, void* e) {
     if (tree->root == NULL) {
         tree->root = binary_node_create(e, tree->element_size);
-        return TREE_CHANGED;
+        return EXIT_SUCCESS;
     } else {
         return binary_node_add(tree, tree->root, e);
     }

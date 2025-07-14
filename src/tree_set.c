@@ -23,7 +23,7 @@ void tree_set_destroy(TreeSet* tree) {
 
 int tree_set_add(TreeSet* tree, void* e) {
     int status = binary_tree_add(tree->tree, e);
-    if (status == TREE_CHANGED) tree->size++;
+    if (status == EXIT_SUCCESS) tree->size++;
     return status;
 }
 

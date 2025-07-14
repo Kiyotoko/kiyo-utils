@@ -22,9 +22,7 @@ BinaryTree* binary_tree_create(int element_size, Comperator comperator);
 
 void binary_tree_destroy(BinaryTree* tree);
 
-#define TREE_CHANGED 0
-#define TREE_UNCHANGED 1
-#define TREE_FAILED 2
+#define EXIT_UNCHANGED -1
 
 int binary_tree_add(BinaryTree* tree, void* e);
 

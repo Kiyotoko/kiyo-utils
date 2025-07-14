@@ -43,9 +43,9 @@ int array_list_get(ArrayList* list, size_t index, void* buffer) {
     if (0 <= index && index < list->len) {
         void* data = list->data + index * list->element_size;
         memcpy(buffer, data, list->element_size);
-        return 0;
+        return EXIT_SUCCESS;
     }
-    return 1;
+    return EXIT_FAILURE;
 }
 
 void array_list_grow(ArrayList* list) {
