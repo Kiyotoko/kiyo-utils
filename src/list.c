@@ -76,17 +76,17 @@ void list_add(List* list, void* value) {
 int list_first(List* list, void* buffer) {
     if (list->head) {
         memcpy(buffer, list->head->value, list->element_size);
-        return 0;
+        return EXIT_SUCCESS;
     }
-    return 1;
+    return EXIT_FAILURE;
 }
 
 int list_last(List* list, void* buffer) {
     if (list->tail) {
         memcpy(buffer, list->tail->value, list->element_size);
-        return 0;
+        return EXIT_SUCCESS;
     }
-    return 1;
+    return EXIT_FAILURE;
 }
 
 int list_get(List* list, size_t index, void* buffer) {
@@ -97,19 +97,21 @@ int list_get(List* list, size_t index, void* buffer) {
             p = p->next;
         }
         memcpy(buffer, p->value, list->element_size);
-        return 0;
+        return EXIT_SUCCESS;
     }
-    return 1;
+    return EXIT_FAILURE;
 }
 
 void list_foreach(List* list, Consumer consumer) {
     BilinkedNode* p = list->head;
+    // Check if list is empty
     if (p) {
+        // Apply consumer to all values
+        consumer(p->value);
         while (p->next) {
             consumer(p->value);
             p = p->next;
         }
-        consumer(p->value);
     }
 }
 
@@ -135,69 +137,88 @@ int list_pop(List* list, void* buffer) {
         list->head = head->next;
         list->len--;
         bilinked_node_destroy(head);
-        return 0;
+        return EXIT_SUCCESS;
     }
-    return 1;
+    return EXIT_FAILURE;
 }
 
-bool list_remove(List* list, size_t index) {
-    if (index >= list->len)
-        // We return here because the index is out of bounds.
-        return false;
-    else if (index == 0) {
-        // Remove the head of the list.
-        list_pop(list, NULL);
-    } else if (list->head != NULL) {
+void list_relink(List* list, BilinkedNode* node) {
+    // Change linking
+    if (node->prev) {
+        // Previous element exists
+        node->prev->next = node->next;
+    } else {
+        // Node is head
+        list->head = node->next;
+    }
+    if (node->next) {
+        // Next element exists
+        node->next->prev = node->prev;
+    } else {
+        // Node is tail
+        list->tail = node->prev;
+    }
+}
+
+int list_remove(List* list, size_t index, void* buffer) {
+    if (0 <= index && index < list->len) {
         // Loop througt the list starting at the head to find the node at
         // the given index.
-        BilinkedNode* p = list->head;
-        for (size_t i = 1; i < index; i++) {
-            p = p->next;
+        BilinkedNode* node = list->head;
+        for (size_t i = 0; i < index; i++) {
+            node = node->next;
         }
 
-        // Cache the deleted note so that we can later free it.
-        BilinkedNode* deleted = p->next;
+        if (buffer) memcpy(buffer, node->value, list->element_size);
+        list_relink(list, node);
 
-        if (index == list->len -1) {
-            // Remove the tail of the list.
-            list->tail = p;
-            p->next = NULL;
-        } else {
-            p->next = deleted->next;
-            p->next->prev = p;
-        }
         list->len--;
-        bilinked_node_destroy(deleted);
+        bilinked_node_destroy(node);
+        return EXIT_SUCCESS;
     }
-    return true;
+    return EXIT_FAILURE;
 }
 
-void list_remove_if(List* list, Test test) {
-    BilinkedNode* previous = NULL;
-    BilinkedNode* node = list->head;
-    while (node) {
-        BilinkedNode* next = node->next;
-        if (test(node->value)) {
-            // Check if removed element was head or tail.
-            if (node == list->head) {
-                list->head = node->next;
-            }
-            if (node == list->tail) {
-                list->tail = previous;
-            }
-            // Change linking.
-            if (previous) {
-                previous->next = node->next;
-            }
+int list_remove_obj(List* list, void* obj, size_t* buffer) {
+    size_t i = 0;
+    for (BilinkedNode* node = list->head; node; node = node->next) {
+        if (!memcmp(node->value, obj, list->element_size)) {
+            memcpy(buffer, &i, sizeof(size_t));
+            list_relink(list, node);
+
             // Decrease len of the list.
             list->len--;
             // Free allocated memory.
             bilinked_node_destroy(node);
-        } else {
-            previous = node;
+            return EXIT_SUCCESS;
         }
-        node = next;
+        i++;
     }
+    return EXIT_FAILURE;
+}
+
+void list_remove_if(List* list, Test test) {
+    for (BilinkedNode* node = list->head; node; node = node->next) {
+        if (test(node->value)) {
+            list_relink(list, node);
+
+            // Decrease len of the list.
+            list->len--;
+            // Free allocated memory.
+            bilinked_node_destroy(node);
+        }
+    }
+}
+
+size_t list_len(List* list) {
+    return list->len;
+}
+
+void list_clear(List* list) {
+    if (list->head) {
+        bilinked_node_destroy_recursive(list->head);
+    }
+    list->len = 0;
 }
 
 BilinkedNode** list_iter(List* list) {

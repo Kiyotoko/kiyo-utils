@@ -1,7 +1,6 @@
-#ifndef BIlist_H
-#define BIlist_H
+#ifndef LIST_H
+#define LIST_H
 
-#include <stdbool.h>
 #include <stddef.h>
 #include "functions.h"
 
@@ -116,12 +115,14 @@ int list_peek(List* list, void* buffer);
 int list_pop(List* list, void* buffer);
 
 /**
- * Removes the element at the given index. Returns true on
- * success or false if it was index out of bounds.
+ * Removes the element at the given index. Returns 0 on
+ * success or 1 if it was index out of bounds.
  * 
  * Time complexity: O(n)
  */
-bool list_remove(List* list, size_t index);
+int list_remove(List* list, size_t index, void* buffer);
+
+int list_remove_obj(List* list, void* obj, size_t* buffer);
 
 /**
  * Removes all elements of the list that statisfy the test.
@@ -129,6 +130,10 @@ bool list_remove(List* list, size_t index);
  * Time complexity: O(n)
  */
 void list_remove_if(List* list, Test test);
+
+size_t list_len(List* list);
+
+void list_clear(List* list);
 
 /**
  * Creates a new iterator from the given list. You should
