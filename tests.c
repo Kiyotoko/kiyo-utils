@@ -54,12 +54,29 @@ void linked_list_test() {
 
 void list_test() {
     List* list = list_create(sizeof(int));
+    int value;
     for (int i = 0; i < 3; i++) {
         list_add(list, &i);
-        int a;
-        assert_false_with(list_last(list, &a), "Expected list last succeds");
-        assert_equals_with(i, a, "Expected added list element is last");
+        assert_false_with(list_last(list, &value), "Expected list last succeeds");
+        assert_equals_with(i, value, "Expected added list element is last");
     }
+    assert_success_with(list_first(list, &value), "Expected list first succeeds");
+    assert_equals(0, value);
+    assert_success_with(list_last(list, &value), "Expected list last succeeds");
+    assert_equals_with(2, value, "Expected last element is 2");
+    size_t index = 2;
+    assert_success(list_get(list, index, &value));
+    assert_equals_with(2, value, "Expected element at index 2 is 2");
+    assert_success_with(list_remove_obj(list, &value, &index), "Expected list remove obj succeeds");
+    assert_equals_with(2, index, "Expected removed element is 2");
+    assert_success_with(list_last(list, &value), "Expected list last succeeds");
+    assert_equals(1, value);
+    assert_failure_with(list_remove(list, index, &value), "Expected list out of bounds");
+    for (int i = list_len(list)-1; i >= 0; i--) {
+        assert_success(list_remove(list, i, &value));
+        assert_equals(i, value);
+    }
+
     list_destroy(list);
 
     succeed_with("List run successfully");
@@ -70,12 +87,12 @@ void tree_set_test() {
     assert_equals(0, tree_set_size(set));
     int i = 0;
     for (; i < 3; i++) {
-        assert_equals(TREE_CHANGED, tree_set_add(set, &i));
+        assert_equals(EXIT_SUCCESS, tree_set_add(set, &i));
     }
     assert_equals(3, tree_set_size(set));
     i = 1;
     assert_true(tree_set_contains(set, &i));
-    assert_equals_with(TREE_UNCHANGED, tree_set_add(set, &(i)), "Expected tree unchanged");
+    assert_equals_with(EXIT_UNCHANGED, tree_set_add(set, &(i)), "Expected tree unchanged");
     i = 10;
     assert_false_with(tree_set_contains(set, &i), "Expected tree does not contain element 10");
     tree_set_destroy(set);

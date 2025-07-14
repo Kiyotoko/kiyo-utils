@@ -45,35 +45,36 @@ void assert_equalsp_with(void* a, void* b, const char* str) {
 
 void assert_equalsi(int a, int b) {
     if (a != b) {
-        fprintf(stderr, "%s%sExpected %i, got %i%s\n",
-            ANSI_RED, ANSI_BOLD, a, b, ANSI_RESET);
+        fprintf(stderr, "%s[error]%s Expected %i, got %i%s\n",
+            ANSI_RED ANSI_BOLD, ANSI_RESET ANSI_DIM, a, b, ANSI_RESET);
         fail;
     }
 }
 void assert_equalsl(long a, long b) {
     if (a != b) {
-        fprintf(stderr, "%s%sExpected %li, got %li%s\n",
-            ANSI_RED, ANSI_BOLD, a, b, ANSI_RESET);
+        fprintf(stderr, "%s[error]%s Expected %li, got %li%s\n",
+            ANSI_RED ANSI_BOLD, ANSI_RESET ANSI_DIM, a, b, ANSI_RESET);
         fail;
     }
 }
 void assert_equalsf(float a, float b) {
     if (a != b) {
-        fprintf(stderr, "%s%sExpected %f, got %f%s\n",
-            ANSI_RED, ANSI_BOLD, a, b, ANSI_RESET);
+        fprintf(stderr, "%s[error]%s Expected %f, got %f%s\n",
+            ANSI_RED ANSI_BOLD, ANSI_RESET ANSI_DIM, a, b, ANSI_RESET);
         fail;
     }
 }
 void assert_equalsb(bool a, bool b) {
     if (a != b) {
-        fprintf(stderr, "%s%sExpected %s, got %s%s\n",
-            ANSI_RED, ANSI_BOLD, a ? "true" : "false", b ? "true" : "false", ANSI_RESET);
+        fprintf(stderr, "%s[error]%s Expected %s, got %s%s\n",
+            ANSI_RED ANSI_BOLD, ANSI_RESET ANSI_DIM, a ? "true" : "false", b ? "true" : "false", ANSI_RESET);
         fail;
     }
 }
 void assert_equalsp(void* a, void* b) {
     if (a != b) {
-        fprintf(stderr, "Expected %p, got %p\n", a, b);
+        fprintf(stderr, "%s[error]%s Expected %p, got %p%s\n",
+            ANSI_RED ANSI_BOLD, ANSI_RESET ANSI_DIM, a, b, ANSI_RESET);
         fail;
     }
 }
@@ -90,12 +91,26 @@ void assert_false_with(bool v, const char* str) {
 }
 
 void assert_true(bool v) {
-    if (!v) {
-        fail_with("Expected true, got false");
-    }
+    assert_true_with(v, "Expected true, got false");
 }
 void assert_false(bool v) {
-    if (v) {
-        fail_with("Expected false, got true");
+    assert_true_with(v, "Expected false, got true");
+}
+
+void assert_success_with(int v, const char* str) {
+    if (v != 0) {
+        fail_with(str);
     }
+}
+void assert_failure_with(int v, const char* str) {
+    if (v == 0) {
+        fail_with(str);
+    }
+}
+
+void assert_success(int v) {
+    assert_success_with(v, "Expected success");
+}
+void assert_failure(int v) {
+    assert_failure_with(v, "Expected failure");
 }

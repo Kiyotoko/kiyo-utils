@@ -43,4 +43,10 @@ void assert_false_with(bool v, const char* str);
 void assert_true(bool v);
 void assert_false(bool v);
 
+void assert_success_with(int v, const char* str);
+void assert_failure_with(int v, const char* str);
+
+void assert_success(int v);
+void assert_failure(int v);
+
 #endif
