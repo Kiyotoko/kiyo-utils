@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
-#include "array_list.h"
+#include "kiyo-collections/array_list.h"
 
 #define DEFAULT_CAPACITY 16
 #define MIN_CAPACITY 4

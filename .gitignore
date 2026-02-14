@@ -2,8 +2,7 @@
 .vscode/
 
 # build system outputs
-.zig-cache/
-zig-out/
+build/
 
 # memory error detector results
 valgrind-out.*

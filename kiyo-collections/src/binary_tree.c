@@ -1,6 +1,6 @@
 #include <string.h>
 #include <stdlib.h>
-#include "binary_tree.h"
+#include "kiyo-collections/binary_tree.h"
 
 BinaryNode* binary_node_create(void* element, int element_size) {
     BinaryNode* created = malloc(sizeof(BinaryNode));

@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
-#include "list.h"
+#include "kiyo-collections/list.h"
 
 BilinkedNode* bilinked_node_create(void* element, size_t element_size) {
     // Allocate a new node that we later add to the list first.

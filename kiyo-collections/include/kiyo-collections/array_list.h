@@ -2,7 +2,7 @@
 #define ARRAY_LIST_H
 
 #include <stdbool.h>
-#include <stdint.h>
+#include <stddef.h>
 
 typedef struct {
     void* data;

@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
-#include "linked_list.h"
+#include "kiyo-collections/linked_list.h"
 
 LinkedNode* linked_node_create(void* element, size_t element_size) {
     // Allocate a new node that we later add to the list first.
