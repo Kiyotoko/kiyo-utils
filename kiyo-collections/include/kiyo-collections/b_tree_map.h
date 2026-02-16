@@ -15,12 +15,13 @@ typedef struct BinaryEntry {
 
 typedef struct {
     BinaryEntry* root;
-    int key_size;
-    int value_size;
+    size_t len;
+    size_t key_size;
+    size_t value_size;
     Comperator comperator;
 } BTreeMap;
 
-BTreeMap* b_tree_map_new(int key_size, int value_size, Comperator comperator);
+BTreeMap* b_tree_map_new(size_t key_size, size_t value_size, Comperator comperator);
 
 void b_tree_map_free(BTreeMap* tree);
 
@@ -34,7 +35,7 @@ int b_tree_map_remove(BTreeMap* tree, void* k);
 
 bool b_tree_map_contains_key(BTreeMap* tree, void* k);
 
-bool b_tree_map_contains_value(BTreeMap* tree, void* k);
+void b_tree_map_clear(BTreeMap* tree);
 
 size_t b_tree_map_height(BTreeMap* tree);
 

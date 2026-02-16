@@ -18,11 +18,34 @@ void b_tree_map_test() {
       int a = i*i;
       TEST_ASSERT_EQUAL_INT(EXIT_SUCCESS, b_tree_map_put(tree, &i, &a));
   }
-  TEST_ASSERT(6 == b_tree_map_height(tree));
+  TEST_ASSERT_EQUAL_INT(6, b_tree_map_height(tree));
   int v;
   int k = 3;
   TEST_ASSERT_EQUAL_INT(EXIT_SUCCESS, b_tree_map_get(tree, &k, &v));
   TEST_ASSERT_EQUAL_INT(9, v);
+  k = 32;
+  TEST_ASSERT_EQUAL_INT(EXIT_FAILURE, b_tree_map_get(tree, &k, &v));
+  k = 10;
+  TEST_ASSERT_EQUAL_INT(EXIT_SUCCESS, b_tree_map_get(tree, &k, &v));
+  TEST_ASSERT_EQUAL_INT(100, v);
+  for (int i = 0; i<32; i++) {
+    TEST_ASSERT(b_tree_map_contains_key(tree, &i));
+  }
+  k = 32;
+  TEST_ASSERT_FALSE(b_tree_map_contains_key(tree, &k));
+  b_tree_map_clear(tree);
+  k = 0;
+  b_tree_map_put(tree, &k, &k);
+  k = 2;
+  b_tree_map_put(tree, &k, &k);
+  k = 1;
+  b_tree_map_put(tree, &k, &k);
+  TEST_ASSERT_EQUAL_INT(1, *((int*)tree->root->value));
+  TEST_ASSERT_EQUAL_INT(0, *((int*)tree->root->left->value));
+  TEST_ASSERT_EQUAL_INT(2, *((int*)tree->root->right->value));
+  for (int i = 0; i<3; i++) {
+    TEST_ASSERT(b_tree_map_contains_key(tree, &i));
+  }
   b_tree_map_free(tree);
 }
 
@@ -30,7 +53,7 @@ void b_tree_set_test() {
   BTreeSet* set = b_tree_set_new(sizeof(int), &compere);
   int i = 0;
   for (; i < 3; i++) {
-      TEST_ASSERT(EXIT_SUCCESS == b_tree_set_add(set, &i));
+      TEST_ASSERT_EQUAL_INT(EXIT_SUCCESS, b_tree_set_add(set, &i));
   }
   i = 1;
   TEST_ASSERT(b_tree_set_contains(set, &i));

@@ -39,44 +39,26 @@ void binary_node_update_height(BinaryNode* node) {
     node->height = (height_left > height_right ? height_left : height_right) + 1;
 }
 
-void binary_node_rotate_right(BinaryNode* node) {
-    // Swap values around
-    void* root = node->value;
-    node->value = node->left->value;
-    node->left->value = root;
-
-    // Move subtrees
-    BinaryNode* rotate1 = node->right;
-    BinaryNode* rotate2 = node->left->right;
-    node->right = node->left;
-    node->right->right = rotate1;
-    rotate1 = node->left->left;
-    node->right->left = rotate2;
-    node->left = rotate1;
-
-    binary_node_update_height(node->left);
-    binary_node_update_height(node->right);
+BinaryNode* binary_node_rotate_right(BinaryNode* node) {
+    BinaryNode *left = node->left;
+    node->left = left->right;
+    left->right = node;
+    
     binary_node_update_height(node);
+    binary_node_update_height(left);
+
+    return left;
 }
 
-void binary_node_rotate_left(BinaryNode* node) {
-    // Swap values around
-    void* root = node->value;
-    node->value = node->right->value;
-    node->right->value = root;
-
-    // Move subtrees
-    BinaryNode* rotate1 = node->left;
-    BinaryNode* rotate2 = node->right->left;
-    node->left = node->right;
-    node->left->left = rotate1;
-    rotate1 = node->right->right;
-    node->left->right = rotate2;
-    node->right = rotate1;
-
-    binary_node_update_height(node->left);
-    binary_node_update_height(node->right);
+BinaryNode* binary_node_rotate_left(BinaryNode* node) {
+    BinaryNode *right = node->right;    
+    node->right = right->left;
+    right->left = node;
+    
     binary_node_update_height(node);
+    binary_node_update_height(right);
+
+    return right;
 }
 
 int binary_node_get_balance_factor(BinaryNode* node) {
@@ -85,28 +67,33 @@ int binary_node_get_balance_factor(BinaryNode* node) {
     return height_left - height_right;
 }
 
-int binary_node_add(BTreeSet* tree, BinaryNode* node, void* e) {
+int binary_node_add(BTreeSet* tree, BinaryNode** origin, void* e) {
+    BinaryNode* node = *origin;
     int c = tree->comperator(tree->root->value, e);
     if (c == 0) return EXIT_UNCHANGED;
 
     // Pointer to the node we want to check.
-    BinaryNode** relevant_child = (c  > 0) ? &(node->right) : &(node->left);
+    BinaryNode** target = (c  > 0) ? &(node->right) : &(node->left);
     
     int status;
-    if ((*relevant_child) == NULL) {
-        *relevant_child = binary_node_new(e, tree->element_size);
-        status = *relevant_child == NULL ? EXIT_FAILURE : EXIT_SUCCESS;
+    if (*target == NULL) {
+        *target = binary_node_new(e, tree->element_size);
+        status = *target == NULL ? EXIT_FAILURE : EXIT_SUCCESS;
     } else {
-        status = binary_node_add(tree, *relevant_child, e);
+        status = binary_node_add(tree, target, e);
     }
     binary_node_update_height(node);
     int balance_factor = binary_node_get_balance_factor(node);
     if (balance_factor > 1) {
-        if (binary_node_get_balance_factor(node->left) < 0) binary_node_rotate_left(node->left);
-        binary_node_rotate_right(node);
+        if (binary_node_get_balance_factor(node->left) < 0) {
+            node->left = binary_node_rotate_left(node->left);
+        }
+        *origin = binary_node_rotate_right(node);
     } else if (balance_factor < -1) {
-        if (binary_node_get_balance_factor(node->right) > 0) binary_node_rotate_right(node->right);
-        binary_node_rotate_left(node);
+        if (binary_node_get_balance_factor(node->right) > 0) {
+            node->right = binary_node_rotate_right(node->right);
+        }
+        *origin = binary_node_rotate_left(node);
     }
     return status;
 }
@@ -149,7 +136,7 @@ int b_tree_set_add(BTreeSet* tree, void* e) {
         tree->root = binary_node_new(e, tree->element_size);
         return EXIT_SUCCESS;
     } else {
-        return binary_node_add(tree, tree->root, e);
+        return binary_node_add(tree, &(tree->root), e);
     }
 }
 
