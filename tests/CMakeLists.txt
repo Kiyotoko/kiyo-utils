@@ -8,10 +8,10 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(unity)
 
 # Define the test executable
-add_executable(list_tests src/test_lists.c)
+add_executable(linked_list_tests src/test_lists.c)
 add_executable(trees_tests src/test_trees.c)
  
-target_link_libraries(list_tests
+target_link_libraries(linked_list_tests
     PRIVATE
         kiyo-collections
         unity
@@ -22,5 +22,5 @@ target_link_libraries(trees_tests
         unity
 )
 
-add_test(NAME list_tests COMMAND list_tests)
+add_test(NAME linked_list_tests COMMAND linked_list_tests)
 add_test(NAME trees_tests COMMAND trees_tests)

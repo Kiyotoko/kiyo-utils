@@ -1,16 +1,16 @@
-#ifndef LINKED_LIST_H
-#define LINKED_LIST_H
+#ifndef LIST_H
+#define LIST_H
 
-#include <stdbool.h>
 #include <stddef.h>
 #include "functions.h"
 
 /**
- * One directional linked node.
+ * Two sided directional linked node.
  */
 typedef struct LinkedNode {
     void* value;
-    struct LinkedNode* next;    
+    struct LinkedNode* prev;
+    struct LinkedNode* next;
 } LinkedNode;
 
 /**
@@ -27,112 +27,104 @@ typedef struct {
 /**
  * Creates and returns a new linked list without a head.
  */
-LinkedList* linked_list_create(size_t element_size);
+LinkedList* linked_list_new(size_t element_size);
 
 /**
  * Destroys the linked list by freeing the memory of
  * the head if present and then itself.
  */
-void linked_list_destroy(LinkedList* list);
+void linked_list_free(LinkedList* linked_list);
 
 /**
  * Adds the value to the start of the linked list. This
- * will increase the len of the list and creates a new
+ * will increase the len of the linked_list and creates a new
  * node with the given value which then adds the node to
- * the start of the list.
+ * the start of the linked_list.
  * 
  * Time complexity: O(1)
  */
-void linked_list_push(LinkedList* list, void* value);
+void linked_list_push(LinkedList* linked_list, void* value);
 
 /**
  * Adds the value to the end of the linked list. This
- * will increase the len of the list and creates a new
+ * will increase the len of the linked_list and creates a new
  * node with the given value which then adds the node to
- * the end of the list.
+ * the end of the linked_list.
  * 
  * Time complexity: O(1)
  */
-void linked_list_add(LinkedList* list, void* value);
+void linked_list_add(LinkedList* linked_list, void* value);
 
 /**
- * Returns the first value of the list or null if this list
+ * Returns the first value of the linked_list or null if this linked_list
  * is empty.This is equal to calling the 'linked_list_peek'
  * function.
  * 
  * Time complexity: O(1)
  */
-void* linked_list_first(LinkedList* list);
+int linked_list_first(LinkedList* linked_list, void* buffer);
 
 /**
- * Returns the last value of the list or null if this
- * list is empty.
+ * Returns the last value of the linked_list or null if this
+ * linked_list is empty.
  * 
  * Time complexity: O(1)
  */
-void* linked_list_last(LinkedList* list);
+int linked_list_last(LinkedList* linked_list, void* buffer);
 
 /**
- * Executes the given consumer for all elements in the list.
- * 
- * Time complexity: O(n)
- */
-void linked_list_foreach(LinkedList* list, Consumer consumer);
-
-/**
- * Creates a new linked list from the given list and adds all
- * elements that statisfy the filter. This method will not
- * change the supplied list.
- * 
- * Time complexity: O(n)
- */
-LinkedList* linked_list_filter(LinkedList* list, Test test);
-
-/**
- * Returns the value at the given index of the list. If the
+ * Returns the value at the given index of the linked_list. If the
  * index is out of bounds, then null will be returned. The
- * value may also be null if you added null values to the list.
+ * value may also be null if you added null values to the linked_list.
  * 
  * Time complexity: O(n)
  */
-void* linked_list_get(LinkedList* list, size_t index);
+int linked_list_get(LinkedList* linked_list, size_t index, void* buffer);
 
 /**
- * Returns the first value of the list or null if this list
+ * Returns the first value of the linked_list or null if this linked_list
  * is empty.This is equal to calling the 'linked_list_first'
  * function.
  * 
  * Time complexity: O(1)
  */
-void* linked_list_peek(LinkedList* list);
+int linked_list_peek(LinkedList* linked_list, void* buffer);
 
 /**
- * Returns and removes the first element of the list. If
- * the list is empty, it will return null instead.
+ * Returns and removes the first element of the linked_list. If
+ * the linked_list is empty, it will return null instead.
  * 
  * Time complexity: O(1)
  */
-void* linked_list_pop(LinkedList* list);
+int linked_list_pop(LinkedList* linked_list, void* buffer);
 
 /**
- * Removes the element at the given index. Returns true on
- * success or false if it was index out of bounds.
+ * Removes the element at the given index. Returns 0 on
+ * success or 1 if it was index out of bounds.
  * 
  * Time complexity: O(n)
  */
-bool linked_list_remove(LinkedList* list, size_t index);
+int linked_list_remove(LinkedList* linked_list, size_t index, void* buffer);
+
+int linked_list_remove_obj(LinkedList* linked_list, void* obj, size_t* buffer);
 
 /**
- * Removes all elements of the list that statisfy the test.
+ * Removes all elements of the linked_list that statisfy the test.
  * 
  * Time complexity: O(n)
  */
-void linked_list_remove_if(LinkedList* list, Test test);
+void linked_list_remove_if(LinkedList* linked_list, Test test);
+
+size_t linked_list_len(LinkedList* linked_list);
+
+void linked_list_clear(LinkedList* linked_list);
 
 /**
- * Creates a new iterator from the given list.
+ * Creates a new iterator from the given linked_list. You should
+ * free the memory by calling the 'linked_list_iter_free'
+ * function.
  */
-LinkedNode** linked_list_iter(LinkedList* list);
+LinkedNode** linked_list_iter(LinkedList* linked_list);
 
 /**
  * Checks if there are any values left.
@@ -155,5 +147,12 @@ void* linked_list_iter_next(LinkedNode** iter);
  * 'linked_list_iter_next'.
  */
 void* linked_list_iter_peek(LinkedNode** iter);
+
+/**
+ * Frees all allocated memory of the supplied iterator.
+ * You should not call any methods of the iterator after
+ * destroying it.
+ */
+void linked_list_iter_free(LinkedNode** iter);
 
 #endif

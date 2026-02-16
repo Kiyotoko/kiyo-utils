@@ -2,10 +2,9 @@
 
 | Collection | Description                                         |
 | ---------- | --------------------------------------------------- |
-| ArrayList  | Dynamically growing array                           |
-| LinkedList | Single linked list                                  |
-| List       | Double linked list                                  |
-| BinaryTree | Traverseble AVL binary tree                         |
+| Vec        | Dynamically growing array                           |
+| LinkedLinkedList | Double linked linked_list                                  |
+| BTreeMap | Traverseble AVL binary tree                         |
 | TreeSet    | Set without duplicates implemented as a binary tree |
 
 ## Installation
@@ -24,24 +23,24 @@ FetchContent_MakeAvailable(kiyo-collections)
 ## Example
 
 ```c
-#include <kiyo-collections/array_list.h>
+#include <kiyo-collections/vec.h>
 #include <stdio.h>
 
 int main() {
-  // Create a new list which stores int
-  ArrayList* list = array_list_create(sizeof(int));
+  // Create a new linked_list which stores int
+  Vec* linked_list = vec_new(sizeof(int));
   for (int i = 0; i < 64; i++) {
       // Add a new element to the end
-      array_list_add(list, &i);
+      vec_push(linked_list, &i);
   }
 
   int a;
   // Access them with get
-  array_list_get(list, 81, &a);
+  vec_get(linked_list, 81, &a);
   printf("Got element: %i\n", a);
 
   // Free heap allocated memory
-  array_list_destroy(list);
+  vec_free(linked_list);
 
   return 0;
 }

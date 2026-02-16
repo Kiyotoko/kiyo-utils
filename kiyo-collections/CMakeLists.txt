@@ -1,15 +1,14 @@
 # Define the library target (STATIC = compiled into a .a/.lib file)
 add_library(kiyo-collections STATIC
-    src/array_list.c  # Source file
-    src/binary_tree.c  # Source file
+    src/b_tree_map.c  # Source file
+    src/b_tree_set.c  # Source file
     src/linked_list.c  # Source file
-    src/list.c  # Source file
-    src/tree_set.c  # Source file
-    include/kiyo-collections/array_list.h
-    include/kiyo-collections/binary_tree.h
+    src/vec.c  # Source file
+    include/kiyo-collections/b_tree_map.h
+    include/kiyo-collections/b_tree_set.h
     include/kiyo-collections/functions.h
     include/kiyo-collections/linked_list.h
-    include/kiyo-collections/tree_set.h
+    include/kiyo-collections/vec.h
 )
 
 # Set include directories for the library and its dependents
