@@ -16,9 +16,13 @@ void b_tree_map_test() {
   TEST_ASSERT(0 == b_tree_map_height(tree));
   for (int i = 0; i<32; i++) {
       int a = i*i;
-      b_tree_map_put(tree, &i, &a);
+      TEST_ASSERT_EQUAL_INT(EXIT_SUCCESS, b_tree_map_put(tree, &i, &a));
   }
   TEST_ASSERT(6 == b_tree_map_height(tree));
+  int v;
+  int k = 3;
+  TEST_ASSERT_EQUAL_INT(EXIT_SUCCESS, b_tree_map_get(tree, &k, &v));
+  TEST_ASSERT_EQUAL_INT(9, v);
   b_tree_map_free(tree);
 }
 

@@ -28,6 +28,8 @@ void b_tree_map_free(BTreeMap* tree);
 
 int b_tree_map_put(BTreeMap* tree, void* k, void* v);
 
+int b_tree_map_get(BTreeMap* tree, void* k, void* v);
+
 int b_tree_map_remove(BTreeMap* tree, void* k);
 
 bool b_tree_map_contains_key(BTreeMap* tree, void* k);

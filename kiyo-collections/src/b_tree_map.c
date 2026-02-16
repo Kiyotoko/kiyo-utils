@@ -48,10 +48,12 @@ void binary_entry_update_height(BinaryEntry* node) {
     node->height = (height_left > height_right ? height_left : height_right) + 1;
 }
 
+// TODO: fix rotation
 void binary_entry_rotate_right(BinaryEntry* node) {
     // Swap values around
     void* root = node->value;
     node->value = node->left->value;
+    node->key = node->left->value;
     node->left->value = root;
 
     // Move subtrees
@@ -95,10 +97,11 @@ int binary_entry_get_balance_factor(BinaryEntry* node) {
 }
 
 int binary_entry_put(BTreeMap* tree, BinaryEntry* node, void* k, void* v) {
-    int c = tree->comperator(tree->root->value, k);
+    int c = tree->comperator(node->key, k);
     if (c == 0) {
         if (node->value == v) return EXIT_UNCHANGED;
         memcpy(node->value, v, tree->value_size);
+        return EXIT_SUCCESS;
     }
 
     // Pointer to the node we want to check.
@@ -123,8 +126,20 @@ int binary_entry_put(BTreeMap* tree, BinaryEntry* node, void* k, void* v) {
     return status;
 }
 
+int binary_entry_get(BTreeMap* tree, BinaryEntry* node, void* k, void* v) {
+    int c = tree->comperator(node->key, k);
+    if (c == 0) {
+        memcpy(v, node->value, tree->value_size);
+        return EXIT_SUCCESS;
+    } else {
+        BinaryEntry* relevant_child = (c  > 0) ? node->right : node->left;
+        if (relevant_child == NULL) return EXIT_FAILURE;
+        return binary_entry_get(tree, relevant_child, k, v);
+    }
+}
+
 bool binary_entry_contains(BTreeMap* tree, BinaryEntry* node, void* e) {
-    int c = tree->comperator(node->value, e);
+    int c = tree->comperator(node->key, e);
     if (c == 0) return true;
 
     // Pointer to the node we want to check.
@@ -135,12 +150,6 @@ bool binary_entry_contains(BTreeMap* tree, BinaryEntry* node, void* e) {
     } else {
         return binary_entry_contains(tree, *relevant_child, e);
     }
-}
-
-void binary_entry_traverse(BinaryEntry* node, Consumer consumer) {
-    if (node->left) binary_entry_traverse(node->left, consumer);
-    consumer(node->value);
-    if (node->right) binary_entry_traverse(node->right, consumer);
 }
 
 BTreeMap* b_tree_map_new(int key_size, int value_size, Comperator comperator) {
@@ -166,14 +175,16 @@ int b_tree_map_put(BTreeMap* tree, void* k, void* v) {
     }
 }
 
+int b_tree_map_get(BTreeMap* tree, void* k, void* v) {
+    if (tree->root == NULL) return EXIT_FAILURE;
+
+    return binary_entry_get(tree, tree->root, k, v);
+}
+
 bool b_tree_map_contains(BTreeMap* tree, void* e) {
     if (tree->root == NULL) return false;
 
     return binary_entry_contains(tree, tree->root, e);
-}
-
-void b_tree_map_traverse(BTreeMap* tree, Consumer consumer) {
-    if (tree->root) binary_entry_traverse(tree->root, consumer);
 }
 
 size_t b_tree_map_height(BTreeMap* tree) {
