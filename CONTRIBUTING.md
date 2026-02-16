@@ -4,13 +4,13 @@
 
 ```sh
 mkdir build && cd build  # Create build directory (out-of-source build)
-cmake ..  # Generate build files (Makefiles, Visual Studio sln, etc.)
+cmake ..  # Generate build files (Makefiles, etc.)
 ```
 
 ## Build
 
 ```sh
-cmake --build .  # Build all targets (math_utils, app, tests)
+cmake --build .  # Build all targets (kiyo-collections and tests)
 # Or build a specific target:
 cmake --build . --target kiyo-collections  # Only build the app
 ```

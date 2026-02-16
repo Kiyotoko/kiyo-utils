@@ -3,9 +3,9 @@
 | Collection | Description                                         |
 | ---------- | --------------------------------------------------- |
 | Vec        | Dynamically growing array                           |
-| LinkedLinkedList | Double linked linked_list                                  |
-| BTreeMap | Traverseble AVL binary tree                         |
-| TreeSet    | Set without duplicates implemented as a binary tree |
+| LinkedList | Double linked linked_list                           |
+| BTreeMap   | Traverseble AVL binary tree                         |
+| BTreeSet   | Set without duplicates implemented as a binary tree |
 
 ## Installation
 
@@ -27,20 +27,22 @@ FetchContent_MakeAvailable(kiyo-collections)
 #include <stdio.h>
 
 int main() {
-  // Create a new linked_list which stores int
-  Vec* linked_list = vec_new(sizeof(int));
+  // Create a new vec which stores integers
+  Vec* vec = vec_new(sizeof(int));
   for (int i = 0; i < 64; i++) {
       // Add a new element to the end
-      vec_push(linked_list, &i);
+      vec_push(vec, &i);
   }
 
+  // Access them with get and store it in a
   int a;
-  // Access them with get
-  vec_get(linked_list, 81, &a);
+  vec_get(vec, 21, &a);
+
+  // Print a, should be 21
   printf("Got element: %i\n", a);
 
   // Free heap allocated memory
-  vec_free(linked_list);
+  vec_free(vec);
 
   return 0;
 }
