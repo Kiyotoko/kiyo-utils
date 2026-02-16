@@ -14,15 +14,14 @@ typedef struct BinaryNode {
 
 typedef struct {
     BinaryNode* root;
-    int element_size;
+    size_t len;
+    size_t element_size;
     Comperator comperator;
 } BTreeSet;
 
-BTreeSet* b_tree_set_new(int element_size, Comperator comperator);
+BTreeSet* b_tree_set_new(size_t element_size, Comperator comperator);
 
 void b_tree_set_free(BTreeSet* tree);
-
-#define EXIT_UNCHANGED -1
 
 int b_tree_set_add(BTreeSet* tree, void* e);
 

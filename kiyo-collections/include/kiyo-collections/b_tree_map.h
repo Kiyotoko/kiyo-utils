@@ -25,8 +25,6 @@ BTreeMap* b_tree_map_new(size_t key_size, size_t value_size, Comperator comperat
 
 void b_tree_map_free(BTreeMap* tree);
 
-#define EXIT_UNCHANGED -1
-
 int b_tree_map_put(BTreeMap* tree, void* k, void* v);
 
 int b_tree_map_get(BTreeMap* tree, void* k, void* v);

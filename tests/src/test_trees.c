@@ -57,7 +57,7 @@ void b_tree_set_test() {
   }
   i = 1;
   TEST_ASSERT(b_tree_set_contains(set, &i));
-  TEST_ASSERT_MESSAGE(EXIT_UNCHANGED == b_tree_set_add(set, &(i)), "Expected tree unchanged");
+  TEST_ASSERT_EQUAL_INT(EXIT_SUCCESS, b_tree_set_add(set, &i));
   i = 10;
   TEST_ASSERT_MESSAGE(!b_tree_set_contains(set, &i), "Expected tree does not contain element 10");
   b_tree_set_free(set);

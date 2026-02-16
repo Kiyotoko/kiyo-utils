@@ -80,7 +80,6 @@ int binary_entry_put(BTreeMap* tree, BinaryEntry** origin, void* k, void* v) {
     BinaryEntry* node = *origin;
     int c = tree->comperator(node->key, k);
     if (c == 0) {
-        if (node->value == v) return EXIT_UNCHANGED;
         memcpy(node->value, v, tree->value_size);
         return EXIT_SUCCESS;
     }

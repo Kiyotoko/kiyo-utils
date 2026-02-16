@@ -1,8 +1,9 @@
+#include <stddef.h>
 #include <string.h>
 #include <stdlib.h>
 #include "kiyo-collections/b_tree_set.h"
 
-BinaryNode* binary_node_new(void* element, int element_size) {
+BinaryNode* binary_node_new(void* element, size_t element_size) {
     BinaryNode* created = malloc(sizeof(BinaryNode));
     if (!created) {
         return NULL;
@@ -69,8 +70,8 @@ int binary_node_get_balance_factor(BinaryNode* node) {
 
 int binary_node_add(BTreeSet* tree, BinaryNode** origin, void* e) {
     BinaryNode* node = *origin;
-    int c = tree->comperator(tree->root->value, e);
-    if (c == 0) return EXIT_UNCHANGED;
+    int c = tree->comperator(node->value, e);
+    if (c == 0) return EXIT_SUCCESS;
 
     // Pointer to the node we want to check.
     BinaryNode** target = (c  > 0) ? &(node->right) : &(node->left);
@@ -78,6 +79,7 @@ int binary_node_add(BTreeSet* tree, BinaryNode** origin, void* e) {
     int status;
     if (*target == NULL) {
         *target = binary_node_new(e, tree->element_size);
+        tree->len++;
         status = *target == NULL ? EXIT_FAILURE : EXIT_SUCCESS;
     } else {
         status = binary_node_add(tree, target, e);
@@ -118,8 +120,9 @@ void binary_node_traverse(BinaryNode* node, Consumer consumer) {
     if (node->right) binary_node_traverse(node->right, consumer);
 }
 
-BTreeSet* b_tree_set_new(int element_size, Comperator comperator) {
+BTreeSet* b_tree_set_new(size_t element_size, Comperator comperator) {
     BTreeSet* created = calloc(1, sizeof(BTreeSet));
+    created->len = 0;
     created->element_size = element_size;
     created->comperator = comperator;
     return created;
@@ -134,6 +137,7 @@ void b_tree_set_free(BTreeSet* tree) {
 int b_tree_set_add(BTreeSet* tree, void* e) {
     if (tree->root == NULL) {
         tree->root = binary_node_new(e, tree->element_size);
+        tree->len++;
         return EXIT_SUCCESS;
     } else {
         return binary_node_add(tree, &(tree->root), e);
