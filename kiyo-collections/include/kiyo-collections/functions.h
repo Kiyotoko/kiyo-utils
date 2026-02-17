@@ -3,10 +3,10 @@
 
 #include <stdbool.h>
 
-typedef int (*Comperator)(void*, void*);
+typedef int (*Comperator)(void *, void *);
 
-typedef void (*Consumer)(void*);
+typedef void (*Consumer)(void *);
 
-typedef bool (*Test)(void*);
+typedef bool (*Test)(void *);
 
 #endif
