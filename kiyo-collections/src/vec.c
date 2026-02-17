@@ -1,6 +1,5 @@
 #include "kiyo-collections/vec.h"
 #include <stdbool.h>
-#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -14,7 +13,7 @@ Vec *vec_new(size_t element_size) {
     return NULL;
 
   // Allocate a new array with the default capacity.
-  int *array = calloc(DEFAULT_CAPACITY, element_size);
+  void *array = calloc(DEFAULT_CAPACITY, element_size);
   if (!array) {
     free(created);
     return NULL;
@@ -37,14 +36,14 @@ void vec_push(Vec *linked_list, void *e) {
   if (linked_list->len >= linked_list->capacity) {
     vec_grow(linked_list);
   }
-  memcpy(linked_list->data + linked_list->len * linked_list->element_size, e,
+  memcpy((char *)linked_list->data + linked_list->len * linked_list->element_size, e,
          linked_list->element_size);
   linked_list->len++;
 }
 
 int vec_get(Vec *linked_list, size_t index, void *buffer) {
   if (0 <= index && index < linked_list->len) {
-    void *data = linked_list->data + index * linked_list->element_size;
+    void *data = (char *) linked_list->data + index * linked_list->element_size;
     memcpy(buffer, data, linked_list->element_size);
     return EXIT_SUCCESS;
   }
