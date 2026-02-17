@@ -26,3 +26,15 @@ ctest  # Run all tests (from the build directory)
 ```sh
 valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --log-file=valgrind-out.txt ./tests/your-test
 ```
+
+## Format files
+
+```sh
+clang-format -i ./kiyo-collections/**/*.c ./kiyo-collections/**/*.h ./tests/**/*.c
+```
+
+## Check for Common Mistakes
+
+```sh
+clang-check -p build/compile_commands.json --analyze --fixit kiyo-collections/src/*.c
+```
