@@ -178,8 +178,13 @@ int linked_list_remove_obj(LinkedList *linked_list, void *obj, size_t *buffer) {
 }
 
 void linked_list_remove_if(LinkedList *linked_list, Test test) {
-  for (LinkedNode *node = linked_list->head; node; node = node->next) {
+  LinkedNode *node = linked_list->head;
+  while (node) {
+    // Store next node before it may be freed.
+    LinkedNode *next = node->next;
     if (test(node->value)) {
+      // Currently the list is structured as a -> b -> c and
+      // we remove b here. Therefore we directly connect a with c.
       linked_list_relink(linked_list, node);
 
       // Decrease len of the linked_list.
@@ -187,6 +192,7 @@ void linked_list_remove_if(LinkedList *linked_list, Test test) {
       // Free allocated memory.
       linked_node_free(node);
     }
+    node = next;
   }
 }
 
