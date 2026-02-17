@@ -82,7 +82,7 @@ int linked_list_last(LinkedList *linked_list, void *buffer);
 int linked_list_get(LinkedList *linked_list, size_t index, void *buffer);
 
 /**
- * Returns the first value of the linked_list or null if this linked_list
+ * Returns the first value of the linked_list or null if this linked list
  * is empty.This is equal to calling the 'linked_list_first'
  * function.
  *
@@ -92,7 +92,7 @@ int linked_list_peek(LinkedList *linked_list, void *buffer);
 
 /**
  * Returns and removes the first element of the linked_list. If
- * the linked_list is empty, it will return null instead.
+ * the linked list is empty, it will return null instead.
  *
  * Time complexity: O(1)
  */

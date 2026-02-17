@@ -29,8 +29,6 @@ int b_tree_set_remove(BTreeSet *tree, void *e);
 
 bool b_tree_set_contains(BTreeSet *tree, void *e);
 
-void b_tree_set_traverse(BTreeSet *tree, Consumer consumer);
-
-size_t b_tree_set_height(BTreeSet *tree);
+size_t b_tree_set_len(BTreeSet *tree);
 
 #endif

@@ -4,10 +4,11 @@
 
 LinkedNode *linked_node_new(void *element, size_t element_size) {
   // Allocate a new node that we later add to the linked_list first.
-  LinkedNode *created = calloc(1, sizeof(LinkedNode));
+  LinkedNode *created = malloc(sizeof(LinkedNode));
   if (!created) {
-    return false;
+    return NULL;
   }
+
   created->value = malloc(element_size);
   created->next = NULL;
   created->prev = NULL;
@@ -33,9 +34,12 @@ void linked_node_free_recursive(LinkedNode *node) {
 }
 
 LinkedList *linked_list_new(size_t element_size) {
-  LinkedList *created = (LinkedList *)calloc(1, sizeof(LinkedList));
+  LinkedList *created = (LinkedList *)malloc(sizeof(LinkedList));
   if (!created)
     return NULL;
+  created->head = NULL;
+  created->tail = NULL;
+  created->len = 0;
   created->element_size = element_size;
 
   return created;

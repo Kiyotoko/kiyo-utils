@@ -142,7 +142,8 @@ bool binary_entry_contains_key(BTreeMap *tree, BinaryEntry *node, void *e) {
 
 BTreeMap *b_tree_map_new(size_t key_size, size_t value_size,
                          Comperator comperator) {
-  BTreeMap *created = calloc(1, sizeof(BTreeMap));
+  BTreeMap *created = malloc(sizeof(BTreeMap));
+  created->root = NULL;
   created->len = 0;
   created->key_size = key_size;
   created->value_size = value_size;

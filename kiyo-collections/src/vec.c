@@ -1,6 +1,5 @@
 #include "kiyo-collections/vec.h"
 #include <stdbool.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -8,7 +7,7 @@
 #define MIN_CAPACITY 4
 
 Vec *vec_new(size_t element_size) {
-  Vec *created = calloc(1, sizeof(Vec));
+  Vec *created = malloc(sizeof(Vec));
   if (!created)
     return NULL;
 
@@ -19,78 +18,77 @@ Vec *vec_new(size_t element_size) {
     return NULL;
   }
   created->data = array;
+  created->len = 0;
   created->capacity = DEFAULT_CAPACITY;
   created->element_size = element_size;
 
   return created;
 }
 
-void vec_free(Vec *linked_list) {
-  free(linked_list->data);
-  free(linked_list);
+void vec_free(Vec *vec) {
+  free(vec->data);
+  free(vec);
 }
 
-void vec_push(Vec *linked_list, void *e) {
+void vec_push(Vec *vec, void *e) {
   // Check if we have any capacity left. If not, grow the array and then
   // continue.
-  if (linked_list->len >= linked_list->capacity) {
-    vec_grow(linked_list);
+  if (vec->len >= vec->capacity) {
+    vec_grow(vec);
   }
-  memcpy((char *)linked_list->data + linked_list->len * linked_list->element_size, e,
-         linked_list->element_size);
-  linked_list->len++;
+  memcpy((char *)vec->data + vec->len * vec->element_size, e,
+         vec->element_size);
+  vec->len++;
 }
 
-int vec_get(Vec *linked_list, size_t index, void *buffer) {
-  if (0 <= index && index < linked_list->len) {
-    void *data = (char *) linked_list->data + index * linked_list->element_size;
-    memcpy(buffer, data, linked_list->element_size);
+int vec_get(Vec *vec, size_t index, void *buffer) {
+  if (0 <= index && index < vec->len) {
+    void *data = (char *)vec->data + index * vec->element_size;
+    memcpy(buffer, data, vec->element_size);
     return EXIT_SUCCESS;
   }
   return EXIT_FAILURE;
 }
 
-void vec_grow(Vec *linked_list) {
+void vec_grow(Vec *vec) {
   // Calculate new capacity. The new capacity is the current capacity doubled.
-  int new_capacity = linked_list->capacity * 2;
+  int new_capacity = vec->capacity * 2;
   if (new_capacity < MIN_CAPACITY)
     new_capacity = MIN_CAPACITY;
 
   // Allocate a new array with the new capacity
-  void *array =
-      realloc(linked_list->data, new_capacity * linked_list->element_size);
+  void *array = realloc(vec->data, new_capacity * vec->element_size);
   // Failed to allocate memory, return.
   if (!array)
     return;
 
-  linked_list->data = array;
-  linked_list->capacity = new_capacity;
+  vec->data = array;
+  vec->capacity = new_capacity;
 }
 
-void vec_shrink(Vec *linked_list, size_t new_capacity) {
-  if (new_capacity < linked_list->len)
+void vec_shrink(Vec *vec, size_t new_capacity) {
+  if (new_capacity < vec->len)
     return;
-  void *array =
-      realloc(linked_list->data, new_capacity * linked_list->element_size);
+  void *array = realloc(vec->data, new_capacity * vec->element_size);
   // Failed to allocate memory, return.
   if (!array)
     return;
 
-  linked_list->data = array;
-  linked_list->capacity = new_capacity;
+  vec->data = array;
+  vec->capacity = new_capacity;
 }
 
-void vec_clear(Vec *linked_list) {
-  free(linked_list->data);
-  linked_list->capacity = MIN_CAPACITY;
-  linked_list->len = 0;
-  void *array = calloc(linked_list->capacity, linked_list->element_size);
+void vec_clear(Vec *vec) {
+  free(vec->data);
+  vec->capacity = MIN_CAPACITY;
+  vec->len = 0;
+  void *array = calloc(vec->capacity, vec->element_size);
   // Failed to allocate memory, return.
   if (!array)
     return;
-  linked_list->data = array;
+  vec->data = array;
 }
 
-size_t vec_len(Vec *linked_list) { return linked_list->len; }
+size_t vec_len(Vec *vec) { return vec->len; }
 
-bool vec_is_empty(Vec *linked_list) { return linked_list->len == 0; }
+bool vec_is_empty(Vec *vec) { return vec->len == 0; }

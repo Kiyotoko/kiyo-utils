@@ -116,16 +116,9 @@ bool binary_node_contains(BTreeSet *tree, BinaryNode *node, void *e) {
   }
 }
 
-void binary_node_traverse(BinaryNode *node, Consumer consumer) {
-  if (node->left)
-    binary_node_traverse(node->left, consumer);
-  consumer(node->value);
-  if (node->right)
-    binary_node_traverse(node->right, consumer);
-}
-
 BTreeSet *b_tree_set_new(size_t element_size, Comperator comperator) {
-  BTreeSet *created = calloc(1, sizeof(BTreeSet));
+  BTreeSet *created = malloc(sizeof(BTreeSet));
+  created->root = NULL;
   created->len = 0;
   created->element_size = element_size;
   created->comperator = comperator;
@@ -156,14 +149,4 @@ bool b_tree_set_contains(BTreeSet *tree, void *e) {
   return binary_node_contains(tree, tree->root, e);
 }
 
-void b_tree_set_traverse(BTreeSet *tree, Consumer consumer) {
-  if (tree->root)
-    binary_node_traverse(tree->root, consumer);
-}
-
-size_t b_tree_set_height(BTreeSet *tree) {
-  if (tree->root)
-    return tree->root->height;
-
-  return 0;
-}
+size_t b_tree_set_len(BTreeSet *tree) { return tree->len; }
