@@ -6,3 +6,7 @@ build/
 
 # memory error detector results
 valgrind-out.*
+
+# clang
+.cache/
+compile_commands.json
