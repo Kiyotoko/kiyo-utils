@@ -1,5 +1,5 @@
-#ifndef vec_H
-#define vec_H
+#ifndef VEC_H
+#define VEC_H
 
 #include <stdbool.h>
 #include <stddef.h>

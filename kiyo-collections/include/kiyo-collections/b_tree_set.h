@@ -1,5 +1,5 @@
-#ifndef b_tree_set_H
-#define b_tree_set_H
+#ifndef B_TREE_SET_H
+#define B_TREE_SET_H
 
 #include "functions.h"
 #include <stdbool.h>

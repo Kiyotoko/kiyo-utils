@@ -1,5 +1,5 @@
-#ifndef b_tree_map_H
-#define b_tree_map_H
+#ifndef B_TREE_MAP_H
+#define B_TREE_MAP_H
 
 #include "functions.h"
 #include <stdbool.h>
