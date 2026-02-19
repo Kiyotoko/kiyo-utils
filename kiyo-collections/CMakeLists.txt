@@ -19,7 +19,7 @@ target_include_directories(kiyo-collections
 )
 
 # Optional: Enable warnings for better code quality
-if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
+if(CMAKE_C_COMPILER_ID MATCHES "Clang|GNU")
     target_compile_options(kiyo-collections PRIVATE -Wall -Wextra -Wpedantic)
 elseif(MSVC)
     target_compile_options(kiyo-collections PRIVATE /W4)
@@ -40,10 +40,10 @@ install(DIRECTORY include/ DESTINATION include)
 # Generate and install a CMake config file for find_package(math_utils)
 install(EXPORT kiyo-collections
     FILE kiyo-collections.cmake
-    NAMESPACE kiyo-collections
+    NAMESPACE kiyo-collections::
     DESTINATION lib/cmake/kiyo-collections  # Where find_package looks for config files
 )
- 
+
 # Optional: Generate a Config.cmake file (simplifies find_package)
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file(

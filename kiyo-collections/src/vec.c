@@ -42,7 +42,7 @@ void vec_push(Vec *vec, void *e) {
 }
 
 int vec_get(Vec *vec, size_t index, void *buffer) {
-  if (0 <= index && index < vec->len) {
+  if (index < vec->len) {
     void *data = (char *)vec->data + index * vec->element_size;
     memcpy(buffer, data, vec->element_size);
     return EXIT_SUCCESS;

@@ -7,6 +7,13 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(unity)
 
+# Optional: Enable warnings for better code quality
+if(CMAKE_C_COMPILER_ID MATCHES "Clang|GNU")
+    target_compile_options(kiyo-collections PRIVATE -g3 -O1 -Wall -Wextra -Wpedantic)
+elseif(MSVC)
+    target_compile_options(kiyo-collections PRIVATE /W4)
+endif()
+
 # Define the test executable
 add_executable(test_b_tree_map src/test_b_tree_map.c)
 add_executable(test_b_tree_set src/test_b_tree_set.c)
