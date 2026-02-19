@@ -48,7 +48,8 @@ void test_linked_list_pop_front() {
   TEST_ASSERT_EQUAL_INT(64, linked_list_len(linked_list));
   int buf;
   for (int i = 0; i < 64; i++) {
-    TEST_ASSERT_EQUAL_INT(EXIT_SUCCESS, linked_list_pop_front(linked_list, &buf));
+    TEST_ASSERT_EQUAL_INT(EXIT_SUCCESS,
+                          linked_list_pop_front(linked_list, &buf));
     TEST_ASSERT_EQUAL_INT(i, buf);
   }
   TEST_ASSERT_EQUAL_INT(0, linked_list_len(linked_list));
@@ -61,7 +62,8 @@ void test_linked_list_pop_back() {
   TEST_ASSERT_EQUAL_INT(64, linked_list_len(linked_list));
   int buf;
   for (int i = 63; i >= 0; i--) {
-    TEST_ASSERT_EQUAL_INT(EXIT_SUCCESS, linked_list_pop_back(linked_list, &buf));
+    TEST_ASSERT_EQUAL_INT(EXIT_SUCCESS,
+                          linked_list_pop_back(linked_list, &buf));
     TEST_ASSERT_EQUAL_INT(i, buf);
   }
   TEST_ASSERT_EQUAL_INT(0, linked_list_len(linked_list));
@@ -77,14 +79,13 @@ void test_linked_list_remove() {
   TEST_ASSERT_EQUAL_INT(3, buf);
   TEST_ASSERT_EQUAL_INT(63, linked_list_len(linked_list));
 
-  TEST_ASSERT_EQUAL_INT(EXIT_FAILURE, linked_list_remove(linked_list, 63, &buf));
+  TEST_ASSERT_EQUAL_INT(EXIT_FAILURE,
+                        linked_list_remove(linked_list, 63, &buf));
 
   TEST_ASSERT_EQUAL_INT(63, linked_list_len(linked_list));
 }
 
-bool greater_eq_10(void *v) {
-  return *(int*)v >= 10;
-}
+bool greater_eq_10(void *v) { return *(int *)v >= 10; }
 
 void test_linked_list_remove_if() {
   for (int i = 0; i < 64; i++) {

@@ -54,7 +54,8 @@ void linked_list_free(LinkedList *linked_list) {
   free(linked_list);
 }
 
-bool linked_list_contains(LinkedList *linked_list, Comperator comperator, void *value) {
+bool linked_list_contains(LinkedList *linked_list, Comperator comperator,
+                          void *value) {
   LinkedNode *element = linked_list->head;
   while (element) {
     if (!comperator(element->value, value)) {
