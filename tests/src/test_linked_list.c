@@ -1,5 +1,5 @@
-#include <unity.h>
 #include <stdlib.h>
+#include <unity.h>
 
 #include "kiyo-collections/linked_list.h"
 #include "unity_internals.h"

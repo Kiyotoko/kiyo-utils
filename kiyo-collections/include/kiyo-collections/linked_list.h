@@ -146,8 +146,8 @@ void linked_list_clear(LinkedList *linked_list);
 
 #if ENABLE_GENERICS
 
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define DECLARE_LINKED_LIST_H(T)                                               \
   typedef struct LinkedNode$##T {                                              \
@@ -166,19 +166,18 @@ void linked_list_clear(LinkedList *linked_list);
                                   Comperator comperator, T *value);
 
 #define DECLARE_LINKED_LIST_C(T)                                               \
-  LinkedNode$##T *linked_node$##T##_new(T *element) {                          \
+  LinkedNode$##T *linked_node$##T##_new(T element) {                           \
     LinkedNode$##T *created = malloc(sizeof(LinkedNode$##T));                  \
     if (!created) {                                                            \
       return NULL;                                                             \
     }                                                                          \
-    memcpy(&(created->value), element, sizeof(T));                             \
+    /*memcpy(&(created->value), element, sizeof(T));*/                         \
+    created->value = element;                                                  \
     created->next = NULL;                                                      \
     created->prev = NULL;                                                      \
     return created;                                                            \
   }                                                                            \
-  void linked_node$##T##_free(LinkedNode$##T *node) {                          \
-    free(node);                                                                \
-  }                                                                            \
+  void linked_node$##T##_free(LinkedNode$##T *node) { free(node); }            \
   LinkedList$##T *linked_list$##T##_new() {                                    \
     LinkedList$##T *created = (LinkedList$##T *)malloc(sizeof(LinkedList));    \
     if (!created)                                                              \
@@ -204,14 +203,14 @@ void linked_list_clear(LinkedList *linked_list);
                                   Comperator comperator, T *value) {           \
     LinkedNode$##T *element = linked_list->head;                               \
     while (element) {                                                          \
-      if (!comperator(&(element->value), value)) {                                \
+      if (!comperator(&(element->value), value)) {                             \
         return true;                                                           \
       }                                                                        \
       element = element->next;                                                 \
     }                                                                          \
     return false;                                                              \
   }                                                                            \
-  void linked_list$##T##_push_front(LinkedList$##T *linked_list, T *value) {   \
+  void linked_list$##T##_push_front(LinkedList$##T *linked_list, T value) {    \
     LinkedNode$##T *created = linked_node$##T##_new(value);                    \
     if (linked_list->head) {                                                   \
       created->next = linked_list->head;                                       \
@@ -222,7 +221,7 @@ void linked_list_clear(LinkedList *linked_list);
     linked_list->head = created;                                               \
     linked_list->len++;                                                        \
   }                                                                            \
-  void linked_list$##T##_push_back(LinkedList$##T *linked_list, T *value) {    \
+  void linked_list$##T##_push_back(LinkedList$##T *linked_list, T value) {     \
     LinkedNode$##T *created = linked_node$##T##_new(value);                    \
     if (linked_list->head) {                                                   \
       linked_list->tail->next = created;                                       \
@@ -235,26 +234,26 @@ void linked_list_clear(LinkedList *linked_list);
   }                                                                            \
   int linked_list$##T##_front(LinkedList$##T *linked_list, T *buffer) {        \
     if (linked_list->head) {                                                   \
-      memcpy(buffer, &(linked_list->head->value), sizeof(T));                     \
+      *buffer = linked_list->head->value;                                      \
       return EXIT_SUCCESS;                                                     \
     }                                                                          \
     return EXIT_FAILURE;                                                       \
   }                                                                            \
   int linked_list$##T##_back(LinkedList$##T *linked_list, T *buffer) {         \
     if (linked_list->tail) {                                                   \
-      memcpy(buffer, &(linked_list->tail->value), sizeof(T));                     \
+      *buffer = linked_list->tail->value;                                      \
       return EXIT_SUCCESS;                                                     \
     }                                                                          \
     return EXIT_FAILURE;                                                       \
   }                                                                            \
   int linked_list$##T##_get(LinkedList$##T *linked_list, size_t index,         \
-                            T *buffer) {                                    \
+                            T *buffer) {                                       \
     if (index < linked_list->len) {                                            \
       LinkedNode$##T *p = linked_list->head;                                   \
       for (size_t i = 0; i < index; i++) {                                     \
         p = p->next;                                                           \
       }                                                                        \
-      memcpy(buffer, &(p->value), sizeof(T));                     \
+      *buffer = p->value;                                                      \
       return EXIT_SUCCESS;                                                     \
     }                                                                          \
     return EXIT_FAILURE;                                                       \
@@ -263,7 +262,7 @@ void linked_list_clear(LinkedList *linked_list);
     if (linked_list->head != NULL) {                                           \
       LinkedNode$##T *head = linked_list->head;                                \
       if (buffer)                                                              \
-        memcpy(buffer, &(head->value), sizeof(T));                \
+        *buffer = head->value;                                                 \
       if (head->next) {                                                        \
         head->next->prev = NULL;                                               \
       } else {                                                                 \
@@ -280,7 +279,7 @@ void linked_list_clear(LinkedList *linked_list);
     if (linked_list->tail != NULL) {                                           \
       LinkedNode$##T *tail = linked_list->tail;                                \
       if (buffer)                                                              \
-        memcpy(buffer, &(tail->value), sizeof(T));                \
+        *buffer = tail->value;                                                 \
       if (tail->prev) {                                                        \
         tail->prev->next = NULL;                                               \
       } else {                                                                 \
@@ -314,7 +313,7 @@ void linked_list_clear(LinkedList *linked_list);
         node = node->next;                                                     \
       }                                                                        \
       if (buffer)                                                              \
-        memcpy(buffer, &(node->value), sizeof(T));                             \
+        *buffer = node->value;                                                 \
       linked_list$##T##_relink(linked_list, node);                             \
       linked_list->len--;                                                      \
       linked_node$##T##_free(node);                                            \
@@ -326,7 +325,7 @@ void linked_list_clear(LinkedList *linked_list);
     LinkedNode$##T *node = linked_list->head;                                  \
     while (node) {                                                             \
       LinkedNode$##T *next = node->next;                                       \
-      if (test(&(node->value))) {                                                 \
+      if (test(&(node->value))) {                                              \
         linked_list$##T##_relink(linked_list, node);                           \
         linked_list->len--;                                                    \
         linked_node$##T##_free(node);                                          \
