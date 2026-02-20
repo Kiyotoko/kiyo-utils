@@ -1,8 +1,8 @@
-#include <stddef.h>
-#include <stdlib.h>
 #include <unity.h>
+#include <stdlib.h>
 
 #include "kiyo-collections/linked_list.h"
+#include "unity_internals.h"
 
 LinkedList *linked_list;
 
@@ -120,6 +120,12 @@ void test_linked_list_clear() {
   TEST_ASSERT_EQUAL_INT(64, linked_list_len(linked_list));
 }
 
+void test_linked_list_perf() {
+  for (int i = 0; i < 10000000; i++) {
+    linked_list_push_front(linked_list, &i);
+  }
+}
+
 int main() {
   UNITY_BEGIN();
 
@@ -132,6 +138,7 @@ int main() {
   RUN_TEST(test_linked_list_remove_if);
   RUN_TEST(test_linked_list_is_empty);
   RUN_TEST(test_linked_list_clear);
+  RUN_TEST(test_linked_list_perf);
 
   return UNITY_END();
 }

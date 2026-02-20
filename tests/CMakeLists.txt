@@ -17,6 +17,7 @@ endif()
 # Define the test executable
 add_executable(test_b_tree_map src/test_b_tree_map.c)
 add_executable(test_b_tree_set src/test_b_tree_set.c)
+add_executable(test_linked_list_generic src/test_linked_list_generic.c)
 add_executable(test_linked_list src/test_linked_list.c)
 add_executable(test_vec src/test_vec.c)
  
@@ -26,6 +27,11 @@ target_link_libraries(test_b_tree_map
         unity
 )
 target_link_libraries(test_b_tree_set
+    PRIVATE
+        kiyo-collections
+        unity
+)
+target_link_libraries(test_linked_list_generic
     PRIVATE
         kiyo-collections
         unity
@@ -43,5 +49,6 @@ target_link_libraries(test_vec
 
 add_test(NAME test_b_tree_map COMMAND test_b_tree_map)
 add_test(NAME test_b_tree_set COMMAND test_b_tree_set)
+add_test(NAME test_linked_list_generic COMMAND test_linked_list_generic)
 add_test(NAME test_linked_list COMMAND test_linked_list)
 add_test(NAME test_vec COMMAND test_vec)
