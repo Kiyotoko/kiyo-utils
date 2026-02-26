@@ -3,6 +3,7 @@
 
 #include "functions.h"
 #include <stddef.h>
+#include <stdlib.h>
 
 /**
  * Two sided directional linked node.
@@ -86,7 +87,7 @@ int linked_list_back(LinkedList *linked_list, void *buffer);
  * Otherwise writes the content of the element to the buffer and returns EXIT
  * SUCCESS.
  *
- * Time complexity: O(n)
+ * Time complexity: O(min(i, n-i))
  */
 int linked_list_get(LinkedList *linked_list, size_t index, void *buffer);
 
@@ -110,7 +111,7 @@ int linked_list_pop_back(LinkedList *linked_list, void *buffer);
  * Removes the element at the given index. Returns EXIT FAILURE if the index was
  * out of bounds, EXIT SUCCESS otherwise.
  *
- * Time complexity: O(n)
+ * Time complexity: O(min(i, n-i))
  */
 int linked_list_remove(LinkedList *linked_list, size_t index, void *buffer);
 
@@ -144,42 +145,53 @@ bool linked_list_is_empty(LinkedList *linked_list);
  */
 void linked_list_clear(LinkedList *linked_list);
 
-#if ENABLE_GENERICS
+#define GENERATE_LINKED_LIST_H(T) GENERATE_LINKED_LIST_NAMED_H(T, T)
 
-#include <stdlib.h>
-#include <string.h>
-
-#define DECLARE_LINKED_LIST_H(T)                                               \
-  typedef struct LinkedNode$##T {                                              \
+#define GENERATE_LINKED_LIST_NAMED_H(N, T)                                     \
+  typedef struct LinkedNode##N {                                               \
     T value;                                                                   \
-    struct LinkedNode$##T *prev;                                               \
-    struct LinkedNode$##T *next;                                               \
-  } LinkedNode$##T;                                                            \
+    struct LinkedNode##N *prev;                                                \
+    struct LinkedNode##N *next;                                                \
+  } LinkedNode##N;                                                             \
   typedef struct {                                                             \
-    LinkedNode$##T *head;                                                      \
-    LinkedNode$##T *tail;                                                      \
+    LinkedNode##N *head;                                                       \
+    LinkedNode##N *tail;                                                       \
     size_t len;                                                                \
-  } LinkedList$##T;                                                            \
-  LinkedList$##T *linked_list$##T##_new();                                     \
-  void linked_list$##T##_free(LinkedList$##T *linked_list);                    \
-  bool linked_list$##T##_contains(LinkedList$##T *linked_list,                 \
-                                  Comperator comperator, T *value);
+  } LinkedList##N;                                                             \
+  LinkedList##N *linked_list_##N##_new();                                      \
+  void linked_list_##N##_free(LinkedList##N *linked_list);                     \
+  bool linked_list_##N##_contains(LinkedList##N *linked_list,                  \
+                                  Comperator comperator, T *value);            \
+  void linked_list_##N##_push_front(LinkedList##N *linked_list, T value);      \
+  void linked_list_##N##_push_back(LinkedList##N *linked_list, T value);       \
+  int linked_list_##N##_front(LinkedList##N *linked_list, T *buffer);          \
+  int linked_list_##N##_back(LinkedList##N *linked_list, T *buffer);           \
+  int linked_list_##N##_get(LinkedList##N *linked_list, size_t index,          \
+                            T *buffer);                                        \
+  int linked_list_##N##_pop_front(LinkedList##N *linked_list, T *buffer);      \
+  int linked_list_##N##_pop_back(LinkedList##N *linked_list, T *buffer);       \
+  int linked_list_##N##_remove(LinkedList##N *linked_list, size_t index,       \
+                               T *buffer);                                     \
+  void linked_list_##N##_remove_if(LinkedList##N *linked_list, Test test);     \
+  size_t linked_list_##N##_len(LinkedList##N *linked_list);                    \
+  bool linked_list_##N##_is_empty(LinkedList##N *linked_list);                 \
+  void linked_list_##N##_clear(LinkedList##N *linked_list);
 
-#define DECLARE_LINKED_LIST_C(T)                                               \
-  LinkedNode$##T *linked_node$##T##_new(T element) {                           \
-    LinkedNode$##T *created = malloc(sizeof(LinkedNode$##T));                  \
-    if (!created) {                                                            \
+#define GENERATE_LINKED_LIST_C(T) GENERATE_LINKED_LIST_NAMED_C(T, T)
+
+#define GENERATE_LINKED_LIST_NAMED_C(N, T)                                     \
+  LinkedNode##N *linked_node##N##_new(T value) {                               \
+    LinkedNode##N *created = malloc(sizeof(LinkedNode##N));                    \
+    if (!created)                                                              \
       return NULL;                                                             \
-    }                                                                          \
-    /*memcpy(&(created->value), element, sizeof(T));*/                         \
-    created->value = element;                                                  \
+    created->value = value;                                                    \
     created->next = NULL;                                                      \
     created->prev = NULL;                                                      \
     return created;                                                            \
   }                                                                            \
-  void linked_node$##T##_free(LinkedNode$##T *node) { free(node); }            \
-  LinkedList$##T *linked_list$##T##_new() {                                    \
-    LinkedList$##T *created = (LinkedList$##T *)malloc(sizeof(LinkedList));    \
+  void linked_node##N##_free(LinkedNode##N *node) { free(node); }              \
+  LinkedList##N *linked_list_##N##_new() {                                     \
+    LinkedList##N *created = (LinkedList##N *)malloc(sizeof(LinkedList));      \
     if (!created)                                                              \
       return NULL;                                                             \
     created->head = NULL;                                                      \
@@ -187,21 +199,21 @@ void linked_list_clear(LinkedList *linked_list);
     created->len = 0;                                                          \
     return created;                                                            \
   }                                                                            \
-  void linked_list$##T##_free_data(LinkedList$##T *linked_list) {              \
-    LinkedNode$##T *back = linked_list->tail;                                  \
+  void linked_list_##N##_free_data(LinkedList##N *linked_list) {               \
+    LinkedNode##N *back = linked_list->tail;                                   \
     while (back) {                                                             \
-      LinkedNode$##T *current = back;                                          \
+      LinkedNode##N *current = back;                                           \
       back = current->prev;                                                    \
-      linked_node$##T##_free(current);                                         \
+      linked_node##N##_free(current);                                          \
     }                                                                          \
   }                                                                            \
-  void linked_list$##T##_free(LinkedList$##T *linked_list) {                   \
-    linked_list$##T##_free_data(linked_list);                                  \
+  void linked_list_##N##_free(LinkedList##N *linked_list) {                    \
+    linked_list_##N##_free_data(linked_list);                                  \
     free(linked_list);                                                         \
   }                                                                            \
-  bool linked_list$##T##_contains(LinkedList$##T *linked_list,                 \
+  bool linked_list_##N##_contains(LinkedList##N *linked_list,                  \
                                   Comperator comperator, T *value) {           \
-    LinkedNode$##T *element = linked_list->head;                               \
+    LinkedNode##N *element = linked_list->head;                                \
     while (element) {                                                          \
       if (!comperator(&(element->value), value)) {                             \
         return true;                                                           \
@@ -210,8 +222,8 @@ void linked_list_clear(LinkedList *linked_list);
     }                                                                          \
     return false;                                                              \
   }                                                                            \
-  void linked_list$##T##_push_front(LinkedList$##T *linked_list, T value) {    \
-    LinkedNode$##T *created = linked_node$##T##_new(value);                    \
+  void linked_list_##N##_push_front(LinkedList##N *linked_list, T value) {     \
+    LinkedNode##N *created = linked_node##N##_new(value);                      \
     if (linked_list->head) {                                                   \
       created->next = linked_list->head;                                       \
       linked_list->head->prev = created;                                       \
@@ -221,8 +233,8 @@ void linked_list_clear(LinkedList *linked_list);
     linked_list->head = created;                                               \
     linked_list->len++;                                                        \
   }                                                                            \
-  void linked_list$##T##_push_back(LinkedList$##T *linked_list, T value) {     \
-    LinkedNode$##T *created = linked_node$##T##_new(value);                    \
+  void linked_list_##N##_push_back(LinkedList##N *linked_list, T value) {      \
+    LinkedNode##N *created = linked_node##N##_new(value);                      \
     if (linked_list->head) {                                                   \
       linked_list->tail->next = created;                                       \
       created->prev = linked_list->tail;                                       \
@@ -232,35 +244,46 @@ void linked_list_clear(LinkedList *linked_list);
     linked_list->tail = created;                                               \
     linked_list->len++;                                                        \
   }                                                                            \
-  int linked_list$##T##_front(LinkedList$##T *linked_list, T *buffer) {        \
+  int linked_list_##N##_front(LinkedList##N *linked_list, T *buffer) {         \
     if (linked_list->head) {                                                   \
       *buffer = linked_list->head->value;                                      \
       return EXIT_SUCCESS;                                                     \
     }                                                                          \
     return EXIT_FAILURE;                                                       \
   }                                                                            \
-  int linked_list$##T##_back(LinkedList$##T *linked_list, T *buffer) {         \
+  int linked_list_##N##_back(LinkedList##N *linked_list, T *buffer) {          \
     if (linked_list->tail) {                                                   \
       *buffer = linked_list->tail->value;                                      \
       return EXIT_SUCCESS;                                                     \
     }                                                                          \
     return EXIT_FAILURE;                                                       \
   }                                                                            \
-  int linked_list$##T##_get(LinkedList$##T *linked_list, size_t index,         \
+  LinkedNode##T *linked_list##T##_cursor(LinkedList##T *linked_list,           \
+                                         size_t index) {                       \
+    LinkedNode##T *node;                                                       \
+    if (index < linked_list->len / 2) {                                        \
+      node = linked_list->head;                                                \
+      for (size_t i = 0; i < index; i++)                                       \
+        node = node->next;                                                     \
+    } else {                                                                   \
+      node = linked_list->tail;                                                \
+      for (size_t i = linked_list->len - 1; i > index; i--)                    \
+        node = node->prev;                                                     \
+    }                                                                          \
+    return node;                                                               \
+  }                                                                            \
+  int linked_list_##N##_get(LinkedList##N *linked_list, size_t index,          \
                             T *buffer) {                                       \
     if (index < linked_list->len) {                                            \
-      LinkedNode$##T *p = linked_list->head;                                   \
-      for (size_t i = 0; i < index; i++) {                                     \
-        p = p->next;                                                           \
-      }                                                                        \
+      LinkedNode##N *p = linked_list##T##_cursor(linked_list, index);          \
       *buffer = p->value;                                                      \
       return EXIT_SUCCESS;                                                     \
     }                                                                          \
     return EXIT_FAILURE;                                                       \
   }                                                                            \
-  int linked_list$##T##_pop_front(LinkedList$##T *linked_list, T *buffer) {    \
+  int linked_list_##N##_pop_front(LinkedList##N *linked_list, T *buffer) {     \
     if (linked_list->head != NULL) {                                           \
-      LinkedNode$##T *head = linked_list->head;                                \
+      LinkedNode##N *head = linked_list->head;                                 \
       if (buffer)                                                              \
         *buffer = head->value;                                                 \
       if (head->next) {                                                        \
@@ -270,14 +293,14 @@ void linked_list_clear(LinkedList *linked_list);
       }                                                                        \
       linked_list->head = head->next;                                          \
       linked_list->len--;                                                      \
-      linked_node$##T##_free(head);                                            \
+      linked_node##N##_free(head);                                             \
       return EXIT_SUCCESS;                                                     \
     }                                                                          \
     return EXIT_FAILURE;                                                       \
   }                                                                            \
-  int linked_list$##T##_pop_back(LinkedList$##T *linked_list, T *buffer) {     \
+  int linked_list_##N##_pop_back(LinkedList##N *linked_list, T *buffer) {      \
     if (linked_list->tail != NULL) {                                           \
-      LinkedNode$##T *tail = linked_list->tail;                                \
+      LinkedNode##N *tail = linked_list->tail;                                 \
       if (buffer)                                                              \
         *buffer = tail->value;                                                 \
       if (tail->prev) {                                                        \
@@ -287,13 +310,13 @@ void linked_list_clear(LinkedList *linked_list);
       }                                                                        \
       linked_list->tail = tail->prev;                                          \
       linked_list->len--;                                                      \
-      linked_node$##T##_free(tail);                                            \
+      linked_node##N##_free(tail);                                             \
       return EXIT_SUCCESS;                                                     \
     }                                                                          \
     return EXIT_FAILURE;                                                       \
   }                                                                            \
-  void linked_list$##T##_relink(LinkedList$##T *linked_list,                   \
-                                LinkedNode$##T *node) {                        \
+  void linked_list_##N##_relink(LinkedList##N *linked_list,                    \
+                                LinkedNode##N *node) {                         \
     if (node->prev) {                                                          \
       node->prev->next = node->next;                                           \
     } else {                                                                   \
@@ -305,47 +328,42 @@ void linked_list_clear(LinkedList *linked_list);
       linked_list->tail = node->prev;                                          \
     }                                                                          \
   }                                                                            \
-  int linked_list$##T##_remove(LinkedList$##T *linked_list, size_t index,      \
+  int linked_list_##N##_remove(LinkedList##N *linked_list, size_t index,       \
                                T *buffer) {                                    \
     if (index < linked_list->len) {                                            \
-      LinkedNode$##T *node = linked_list->head;                                \
-      for (size_t i = 0; i < index; i++) {                                     \
-        node = node->next;                                                     \
-      }                                                                        \
+      LinkedNode##N *node = linked_list##T##_cursor(linked_list, index);       \
       if (buffer)                                                              \
         *buffer = node->value;                                                 \
-      linked_list$##T##_relink(linked_list, node);                             \
+      linked_list_##N##_relink(linked_list, node);                             \
       linked_list->len--;                                                      \
-      linked_node$##T##_free(node);                                            \
+      linked_node##N##_free(node);                                             \
       return EXIT_SUCCESS;                                                     \
     }                                                                          \
     return EXIT_FAILURE;                                                       \
   }                                                                            \
-  void linked_list$##T##_remove_if(LinkedList$##T *linked_list, Test test) {   \
-    LinkedNode$##T *node = linked_list->head;                                  \
+  void linked_list_##N##_remove_if(LinkedList##N *linked_list, Test test) {    \
+    LinkedNode##N *node = linked_list->head;                                   \
     while (node) {                                                             \
-      LinkedNode$##T *next = node->next;                                       \
+      LinkedNode##N *next = node->next;                                        \
       if (test(&(node->value))) {                                              \
-        linked_list$##T##_relink(linked_list, node);                           \
+        linked_list_##N##_relink(linked_list, node);                           \
         linked_list->len--;                                                    \
-        linked_node$##T##_free(node);                                          \
+        linked_node##N##_free(node);                                           \
       }                                                                        \
       node = next;                                                             \
     }                                                                          \
   }                                                                            \
-  size_t linked_list$##T##_len(LinkedList$##T *linked_list) {                  \
+  size_t linked_list_##N##_len(LinkedList##N *linked_list) {                   \
     return linked_list->len;                                                   \
   }                                                                            \
-  bool linked_list$##T##_is_empty(LinkedList$##T *linked_list) {               \
+  bool linked_list_##N##_is_empty(LinkedList##N *linked_list) {                \
     return linked_list->len == 0;                                              \
   }                                                                            \
-  void linked_list$##T##_clear(LinkedList$##T *linked_list) {                  \
-    linked_list$##T##_free_data(linked_list);                                  \
+  void linked_list_##N##_clear(LinkedList##N *linked_list) {                   \
+    linked_list_##N##_free_data(linked_list);                                  \
     linked_list->head = NULL;                                                  \
     linked_list->tail = NULL;                                                  \
     linked_list->len = 0;                                                      \
   }
-
-#endif
 
 #endif

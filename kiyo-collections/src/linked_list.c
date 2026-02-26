@@ -1,6 +1,5 @@
 #include "kiyo-collections/linked_list.h"
 #include "kiyo-collections/functions.h"
-#include <stdlib.h>
 #include <string.h>
 
 LinkedNode *linked_node_new(void *element, size_t element_size) {
@@ -108,13 +107,24 @@ int linked_list_back(LinkedList *linked_list, void *buffer) {
   return EXIT_FAILURE;
 }
 
+LinkedNode *linked_list_cursor(LinkedList *linked_list, size_t index) {
+  LinkedNode *node;
+  if (index < linked_list->len / 2) {
+    node = linked_list->head;
+    for (size_t i = 0; i < index; i++)
+      node = node->next;
+  } else {
+    node = linked_list->tail;
+    for (size_t i = linked_list->len - 1; i > index; i--)
+      node = node->prev;
+  }
+  return node;
+}
+
 int linked_list_get(LinkedList *linked_list, size_t index, void *buffer) {
   // Check for index out of bounds.
   if (index < linked_list->len) {
-    LinkedNode *p = linked_list->head;
-    for (size_t i = 0; i < index; i++) {
-      p = p->next;
-    }
+    LinkedNode *p = linked_list_cursor(linked_list, index);
     memcpy(buffer, p->value, linked_list->element_size);
     return EXIT_SUCCESS;
   }
@@ -179,10 +189,7 @@ int linked_list_remove(LinkedList *linked_list, size_t index, void *buffer) {
   if (index < linked_list->len) {
     // Loop througt the linked list starting at the head to find the node at
     // the given index.
-    LinkedNode *node = linked_list->head;
-    for (size_t i = 0; i < index; i++) {
-      node = node->next;
-    }
+    LinkedNode *node = linked_list_cursor(linked_list, index);
 
     if (buffer)
       memcpy(buffer, node->value, linked_list->element_size);

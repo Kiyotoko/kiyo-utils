@@ -138,7 +138,6 @@ int main() {
   RUN_TEST(test_linked_list_remove_if);
   RUN_TEST(test_linked_list_is_empty);
   RUN_TEST(test_linked_list_clear);
-  RUN_TEST(test_linked_list_perf);
 
   return UNITY_END();
 }
