@@ -6,6 +6,9 @@ project(kiyo-utils
     VERSION 0.1.0
 )
 
+# Export compile commands for Clang
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 # Global C++ standard (applies to all subprojects by default)
 set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_STANDARD_REQUIRED ON)  # Enforce the standard
