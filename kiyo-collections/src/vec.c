@@ -51,10 +51,11 @@ int vec_insert(Vec *vec, size_t index, void *e) {
     if (vec->len >= vec->capacity) {
       vec_grow(vec);
     }
-    size_t diff = vec->len - index;
+    // Shift all elements one to the right
     memmove((char *)vec->data + (index + 1) * vec->element_size,
             (char *)vec->data + index * vec->element_size,
-            diff * vec->element_size);
+            (vec->len - index) * vec->element_size);
+    // Then copy the data to the array
     memcpy((char *)vec->data + index * vec->element_size, e, vec->element_size);
     vec->len++;
     return EXIT_SUCCESS;
@@ -67,6 +68,8 @@ void vec_append(Vec *vec, Vec *other) {
   if (other->len > 0) {
     size_t min_size = vec->len + other->len;
     if (min_size >= vec->capacity) {
+      // Setting the capacity guarentees that we always allocate to a power of
+      // two.
       vec->capacity = 1 << (sizeof(size_t) - __builtin_clz(min_size));
       vec_grow(vec);
     }
