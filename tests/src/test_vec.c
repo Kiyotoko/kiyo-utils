@@ -2,6 +2,7 @@
 #include <unity.h>
 
 #include "kiyo-collections/vec.h"
+#include "unity_internals.h"
 
 Vec *vec;
 
@@ -88,6 +89,38 @@ void test_vec_get() {
   TEST_ASSERT_EQUAL_INT(EXIT_FAILURE, vec_get(vec, 64, &buf));
 }
 
+void test_vec_clear() {
+  vec_clear(vec);
+  for (int i = 0; i < 32; i++) {
+    vec_push(vec, &i);
+  }
+  TEST_ASSERT_EQUAL_INT(32, vec_len(vec));
+  vec_clear(vec);
+  for (int i = 0; i < 32; i++) {
+    vec_push(vec, &i);
+  }
+  TEST_ASSERT_EQUAL_INT(32, vec_len(vec));
+  vec_clear(vec);
+}
+
+void test_vec_grow_shrink() {
+  TEST_ASSERT_EQUAL_INT(16, vec_capacity(vec));
+  for (int i = 0; i < 32; i++) {
+    vec_push(vec, &i);
+  }
+  TEST_ASSERT_EQUAL_INT(32, vec_len(vec));
+  TEST_ASSERT_EQUAL_INT(32, vec_capacity(vec));
+  vec_grow(vec);
+  TEST_ASSERT_EQUAL_INT(64, vec_capacity(vec));
+  vec_shrink(vec, 32);
+  TEST_ASSERT_EQUAL_INT(32, vec_capacity(vec));
+  int buf;
+  for (int i = 0; i < 32; i++) {
+    vec_get(vec, i, &buf);
+    TEST_ASSERT_EQUAL_INT(i, buf);
+  }
+}
+
 int main() {
   UNITY_BEGIN();
 
@@ -97,6 +130,8 @@ int main() {
   RUN_TEST(test_vec_remove);
   RUN_TEST(test_vec_pop);
   RUN_TEST(test_vec_get);
+  RUN_TEST(test_vec_clear);
+  RUN_TEST(test_vec_grow_shrink);
 
   return UNITY_END();
 }

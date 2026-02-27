@@ -153,4 +153,6 @@ void vec_clear(Vec *vec) {
 
 size_t vec_len(Vec *vec) { return vec->len; }
 
+size_t vec_capacity(Vec *vec) { return vec->capacity; }
+
 bool vec_is_empty(Vec *vec) { return vec->len == 0; }
