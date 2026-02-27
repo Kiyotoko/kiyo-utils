@@ -191,7 +191,7 @@ void linked_list_clear(LinkedList *linked_list);
   }                                                                            \
   void linked_node##N##_free(LinkedNode##N *node) { free(node); }              \
   LinkedList##N *linked_list_##N##_new() {                                     \
-    LinkedList##N *created = (LinkedList##N *)malloc(sizeof(LinkedList));      \
+    LinkedList##N *created = (LinkedList##N *)malloc(sizeof(LinkedList##N));   \
     if (!created)                                                              \
       return NULL;                                                             \
     created->head = NULL;                                                      \
